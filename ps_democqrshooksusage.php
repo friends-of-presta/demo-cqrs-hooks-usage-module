@@ -24,6 +24,7 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
+use Doctrine\DBAL\Query\QueryBuilder;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ToggleColumn;
 use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
 
@@ -103,9 +104,26 @@ class Ps_DemoCQRSHooksUsage extends Module
         ;
     }
 
+    /**
+     * Hooks allows to modify Customers query builder and add custom sql statements.
+     *
+     * @param array $params
+     */
     public function hookActionCustomerGridQueryBuilderModifier(array $params)
     {
-        
+        /** @var QueryBuilder $searchQueryBuilder */
+        $searchQueryBuilder = $params['search_query_builder'];
+
+        $searchQueryBuilder->addSelect(
+            'IF(dcur.`is_allowed_for_review` IS NULL,0,dcur.`is_allowed_for_review`) AS `is_allowed_for_review`'
+        );
+
+        $searchQueryBuilder->leftJoin(
+            'c',
+            '`' . pSQL(_DB_PREFIX_) . 'democqrshooksusage_reviewer`',
+            'dcur',
+            'dcur.`id_customer` = c.`id_customer`'
+        );
     }
 
     /**
