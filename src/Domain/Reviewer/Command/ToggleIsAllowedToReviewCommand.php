@@ -24,23 +24,36 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
-namespace DemoCQRSHookUsage\Controller\Admin;
+namespace DemoCQRSHookUsage\Domain\Reviewer\Command;
 
-use DemoCQRSHookUsage\Domain\Reviewer\Command\ToggleIsAllowedToReviewCommand;
-use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController as AbstractAdminController;
+use PrestaShop\PrestaShop\Core\Domain\Customer\Exception\CustomerException;
+use PrestaShop\PrestaShop\Core\Domain\Customer\ValueObject\CustomerId;
 
 /**
- * This controller holds all custom actions which are added by extending "Sell > Customers" page.
+ * Used for toggling the customer if is allowed to make a review.
  */
-class CustomerReviewController extends AbstractAdminController
+class ToggleIsAllowedToReviewCommand
 {
     /**
-     * Catches the toggle action of customer review.
-     *
-     * @param int $customerId
+     * @var CustomerId
      */
-    public function toggleIsAllowedForReviewAction($customerId)
+    private $customerId;
+
+    /**
+     * @param int $customerId
+     *
+     * @throws CustomerException
+     */
+    public function __construct($customerId)
     {
-        $this->getCommandBus()->handle(new ToggleIsAllowedToReviewCommand((int) $customerId));
+        $this->customerId = new CustomerId($customerId);
+    }
+
+    /**
+     * @return CustomerId
+     */
+    public function getCustomerId()
+    {
+        return $this->customerId;
     }
 }

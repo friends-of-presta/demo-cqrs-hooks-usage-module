@@ -60,13 +60,14 @@ class Ps_DemoCQRSHooksUsage extends Module
     public function install()
     {
         return parent::install() &&
-            // Register hook to allow Logs grid definition modifications.
+            // Register hook to allow Customer grid definition modifications.
             // Each grid's definition modification hook has it's own name. Hook name is built using
             // this structure: "action{grid_id}GridDefinitionModifier", in this case "grid_id" is "customer"
             // this means we will be modifying "Sell > Customers" page grid.
             // You can check any definition factory service in PrestaShop\PrestaShop\Core\Grid\Definition\Factory
             // to see available grid ids. Grid id is returned by `getId()` method.
             $this->registerHook('actionCustomerGridDefinitionModifier') &&
+            // Register hook to allow Customer grid query modifications which allows to add any sql condition.
             $this->registerHook('actionCustomerGridQueryBuilderModifier') &&
             $this->installTables()
         ;

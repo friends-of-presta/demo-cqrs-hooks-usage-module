@@ -36,7 +36,7 @@ class Reviewer extends ObjectModel
     public $id_customer;
 
     /**
-     * @var bool
+     * @var int
      */
     public $is_allowed_for_review;
 
