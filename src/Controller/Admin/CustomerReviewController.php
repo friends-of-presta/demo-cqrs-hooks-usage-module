@@ -27,6 +27,8 @@
 namespace DemoCQRSHookUsage\Controller\Admin;
 
 use DemoCQRSHookUsage\Domain\Reviewer\Command\ToggleIsAllowedToReviewCommand;
+use DemoCQRSHookUsage\Domain\Reviewer\Exception\CannotCreateReviewerException;
+use DemoCQRSHookUsage\Domain\Reviewer\Exception\CannotToggleAllowedToReviewStatusException;
 use DemoCQRSHookUsage\Domain\Reviewer\Exception\ReviewerException;
 use PrestaShop\PrestaShop\Core\Domain\Customer\Exception\CustomerException;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController as AbstractAdminController;
@@ -41,7 +43,7 @@ class CustomerReviewController extends AbstractAdminController
      * Catches the toggle action of customer review.
      *
      * @param int $customerId
-     * 
+     *
      * @return RedirectResponse
      */
     public function toggleIsAllowedForReviewAction($customerId)
@@ -51,10 +53,30 @@ class CustomerReviewController extends AbstractAdminController
 
             $this->addFlash('success', $this->trans('Successful update.', 'Admin.Notifications.Success'));
         } catch (CustomerException $e) {
+            $this->addFlash('error', $this->getErrorMessageForException($e, $this->getErrorMessageMapping()));
         } catch (ReviewerException $e) {
-
+            $this->addFlash('error', $this->getErrorMessageForException($e, $this->getErrorMessageMapping()));
         }
 
         return $this->redirectToRoute('admin_customers_index');
+    }
+
+    /**
+     * Gets error message mappings which are later used to display friendly user error message instead of the
+     * exception message.
+     *
+     * @return array
+     */
+    private function getErrorMessageMapping()
+    {
+//        todo: does translatable messages works in modules? If so, use translatable fields everywhere
+        return [
+            CustomerException::class => 'Something bad happened when trying to get customer id',
+            CannotCreateReviewerException::class => 'Failed to create reviewer',
+            CannotToggleAllowedToReviewStatusException::class => $this->trans(
+                'An error occurred while updating the status.',
+                'Admin.Notifications.Error'
+            )
+        ];
     }
 }
