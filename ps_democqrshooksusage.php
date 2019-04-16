@@ -29,7 +29,9 @@ use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ToggleColumn;
 use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
 use PrestaShop\PrestaShop\Core\Grid\Filter\Filter;
 use PrestaShop\PrestaShop\Core\Search\Filters\CustomerFilters;
+use PrestaShopBundle\Form\Admin\Type\SwitchType;
 use PrestaShopBundle\Form\Admin\Type\YesAndNoChoiceType;
+use Symfony\Component\Form\FormBuilderInterface;
 
 //todo: demonstrate how include custom js extensions for existing grids maybe?.
 //todo: not a single translation works for this module
@@ -83,6 +85,8 @@ class Ps_DemoCQRSHooksUsage extends Module
             $this->registerHook('actionCustomerGridDefinitionModifier') &&
             // Register hook to allow Customer grid query modifications which allows to add any sql condition.
             $this->registerHook('actionCustomerGridQueryBuilderModifier') &&
+            //todo: dock of how to get name
+            $this->registerHook('actioncustomerFormBuilderModifier') &&
             $this->installTables()
         ;
     }
@@ -164,6 +168,16 @@ class Ps_DemoCQRSHooksUsage extends Module
                 }
             }
         }
+    }
+
+    public function hookactioncustomerFormBuilderModifier($params)
+    {
+        /** @var FormBuilderInterface $formBuilder */
+        $formBuilder = $params['form_builder'];
+        $formBuilder->add('is_allowed_for_review', SwitchType::class);
+        $params['data']['is_allowed_for_review'] = true;
+
+        $formBuilder->setData($params['data']);
     }
 
     /**
