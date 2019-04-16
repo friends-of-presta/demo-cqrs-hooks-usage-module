@@ -27,7 +27,10 @@
 namespace DemoCQRSHookUsage\Controller\Admin;
 
 use DemoCQRSHookUsage\Domain\Reviewer\Command\ToggleIsAllowedToReviewCommand;
+use DemoCQRSHookUsage\Domain\Reviewer\Exception\ReviewerException;
+use PrestaShop\PrestaShop\Core\Domain\Customer\Exception\CustomerException;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController as AbstractAdminController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * This controller holds all custom actions which are added by extending "Sell > Customers" page.
@@ -38,9 +41,20 @@ class CustomerReviewController extends AbstractAdminController
      * Catches the toggle action of customer review.
      *
      * @param int $customerId
+     * 
+     * @return RedirectResponse
      */
     public function toggleIsAllowedForReviewAction($customerId)
     {
-        $this->getCommandBus()->handle(new ToggleIsAllowedToReviewCommand((int) $customerId));
+        try {
+            $this->getCommandBus()->handle(new ToggleIsAllowedToReviewCommand((int)$customerId));
+
+            $this->addFlash('success', $this->trans('Successful update.', 'Admin.Notifications.Success'));
+        } catch (CustomerException $e) {
+        } catch (ReviewerException $e) {
+
+        }
+
+        return $this->redirectToRoute('admin_customers_index');
     }
 }
