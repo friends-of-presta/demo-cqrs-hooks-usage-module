@@ -28,7 +28,7 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ToggleColumn;
 use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
 
-//todo: demonstrate how include custom js extensions for existing grids.
+//todo: demonstrate how include custom js extensions for existing grids maybe?.
 /**
  * Class Ps_DemoCQRSHooksUsage demonstrates the usage of CQRS and hooks.
  */
@@ -39,12 +39,22 @@ class Ps_DemoCQRSHooksUsage extends Module
         $this->name = 'ps_democqrshooksusage';
         $this->version = '1.0.0';
         $this->author = 'Tomas Ilginis';
+        $this->need_instance = 0;
 
         parent::__construct();
 
-        $this->displayName = 'Demo for CQRS and hooks usage';
+        $this->displayName = $this->getTranslator()->trans(
+            'Demo for CQRS and hooks usage',
+            [],
+            'Modules.Ps_DemoCQRSHooksUsage'
+        );
+
         $this->description =
-            'Help developers to understand how to create module using new hooks and apply best practices when using CQRS';
+            $this->getTranslator()->trans(
+                'Help developers to understand how to create module using new hooks and apply best practices when using CQRS',
+                [],
+                'Modules.Ps_DemoCQRSHooksUsage'
+            );
 
         $this->ps_versions_compliancy = [
             'min' => '1.7.6.0',
@@ -89,12 +99,14 @@ class Ps_DemoCQRSHooksUsage extends Module
         /** @var GridDefinitionInterface $definition */
         $definition = $params['definition'];
 
+        $translator = $this->getTranslator();
+
         $definition
             ->getColumns()
             ->addAfter(
                 'optin',
                 (new ToggleColumn('is_allowed_for_review'))
-                    ->setName('Allowed for review')
+                    ->setName($translator->trans('Allowed for review', [], 'Modules.Ps_DemoCQRSHooksUsage'))
                     ->setOptions([
                         'field' => 'is_allowed_for_review',
                         'primary_field' => 'id_customer',

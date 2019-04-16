@@ -31,13 +31,13 @@ use DemoCQRSHookUsage\Domain\Reviewer\Exception\CannotCreateReviewerException;
 use DemoCQRSHookUsage\Domain\Reviewer\Exception\CannotToggleAllowedToReviewStatusException;
 use DemoCQRSHookUsage\Domain\Reviewer\Exception\ReviewerException;
 use PrestaShop\PrestaShop\Core\Domain\Customer\Exception\CustomerException;
-use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController as AbstractAdminController;
+use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * This controller holds all custom actions which are added by extending "Sell > Customers" page.
  */
-class CustomerReviewController extends AbstractAdminController
+class CustomerReviewController extends FrameworkBundleAdminController
 {
     /**
      * Catches the toggle action of customer review.
@@ -69,10 +69,15 @@ class CustomerReviewController extends AbstractAdminController
      */
     private function getErrorMessageMapping()
     {
-//        todo: does translatable messages works in modules? If so, use translatable fields everywhere
         return [
-            CustomerException::class => 'Something bad happened when trying to get customer id',
-            CannotCreateReviewerException::class => 'Failed to create reviewer',
+            CustomerException::class => $this->trans(
+                'Something bad happened when trying to get customer id',
+                'Modules.Ps_DemoCQRSHooksUsage'
+            ),
+            CannotCreateReviewerException::class => $this->trans(
+                'Failed to create reviewer',
+                'Modules.Ps_DemoCQRSHooksUsage'
+            ),
             CannotToggleAllowedToReviewStatusException::class => $this->trans(
                 'An error occurred while updating the status.',
                 'Admin.Notifications.Error'
