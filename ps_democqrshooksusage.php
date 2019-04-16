@@ -27,6 +27,7 @@
 use Doctrine\DBAL\Query\QueryBuilder;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ToggleColumn;
 use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
+use PrestaShop\PrestaShop\Core\Search\Filters\CustomerFilters;
 
 //todo: demonstrate how include custom js extensions for existing grids maybe?.
 //todo: not a single translation works for this module
@@ -128,6 +129,9 @@ class Ps_DemoCQRSHooksUsage extends Module
         /** @var QueryBuilder $searchQueryBuilder */
         $searchQueryBuilder = $params['search_query_builder'];
 
+        /** @var CustomerFilters $searchCriteria */
+        $searchCriteria = $params['search_criteria'];
+
         $searchQueryBuilder->addSelect(
             'IF(dcur.`is_allowed_for_review` IS NULL,0,dcur.`is_allowed_for_review`) AS `is_allowed_for_review`'
         );
@@ -138,6 +142,10 @@ class Ps_DemoCQRSHooksUsage extends Module
             'dcur',
             'dcur.`id_customer` = c.`id_customer`'
         );
+
+        if ('is_allowed_for_review' === $searchCriteria->getOrderBy()) {
+            $searchQueryBuilder->orderBy('dcur.`is_allowed_for_review`', $searchCriteria->getOrderWay());
+        }
     }
 
     /**
