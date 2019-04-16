@@ -29,6 +29,7 @@ use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ToggleColumn;
 use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
 
 //todo: demonstrate how include custom js extensions for existing grids maybe?.
+//todo: not a single translation works for this module
 /**
  * Class Ps_DemoCQRSHooksUsage demonstrates the usage of CQRS and hooks.
  */
