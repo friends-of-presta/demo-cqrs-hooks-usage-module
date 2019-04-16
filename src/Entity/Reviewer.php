@@ -24,7 +24,7 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
-namespace DemoCQRSHookUsage\Entity;
+namespace DemoCQRSHooksUsage\Entity;
 
 use PrestaShop\PrestaShop\Adapter\Entity\ObjectModel;
 

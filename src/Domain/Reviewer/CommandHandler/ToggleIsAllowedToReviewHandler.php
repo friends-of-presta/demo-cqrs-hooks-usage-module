@@ -24,12 +24,12 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
-namespace DemoCQRSHookUsage\Domain\Reviewer\CommandHandler;
+namespace DemoCQRSHooksUsage\Domain\Reviewer\CommandHandler;
 
-use DemoCQRSHookUsage\Domain\Reviewer\Command\ToggleIsAllowedToReviewCommand;
-use DemoCQRSHookUsage\Domain\Reviewer\Exception\CannotCreateReviewerException;
-use DemoCQRSHookUsage\Domain\Reviewer\Exception\CannotToggleAllowedToReviewStatusException;
-use DemoCQRSHookUsage\Entity\Reviewer;
+use DemoCQRSHooksUsage\Domain\Reviewer\Command\ToggleIsAllowedToReviewCommand;
+use DemoCQRSHooksUsage\Domain\Reviewer\Exception\CannotCreateReviewerException;
+use DemoCQRSHooksUsage\Domain\Reviewer\Exception\CannotToggleAllowedToReviewStatusException;
+use DemoCQRSHooksUsage\Entity\Reviewer;
 use Doctrine\DBAL\Connection;
 use PDO;
 use PrestaShopException;

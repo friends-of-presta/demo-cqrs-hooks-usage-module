@@ -24,12 +24,12 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
-namespace DemoCQRSHookUsage\Controller\Admin;
+namespace DemoCQRSHooksUsage\Controller\Admin;
 
-use DemoCQRSHookUsage\Domain\Reviewer\Command\ToggleIsAllowedToReviewCommand;
-use DemoCQRSHookUsage\Domain\Reviewer\Exception\CannotCreateReviewerException;
-use DemoCQRSHookUsage\Domain\Reviewer\Exception\CannotToggleAllowedToReviewStatusException;
-use DemoCQRSHookUsage\Domain\Reviewer\Exception\ReviewerException;
+use DemoCQRSHooksUsage\Domain\Reviewer\Command\ToggleIsAllowedToReviewCommand;
+use DemoCQRSHooksUsage\Domain\Reviewer\Exception\CannotCreateReviewerException;
+use DemoCQRSHooksUsage\Domain\Reviewer\Exception\CannotToggleAllowedToReviewStatusException;
+use DemoCQRSHooksUsage\Domain\Reviewer\Exception\ReviewerException;
 use PrestaShop\PrestaShop\Core\Domain\Customer\Exception\CustomerException;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 use Symfony\Component\HttpFoundation\RedirectResponse;

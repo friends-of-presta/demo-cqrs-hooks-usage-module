@@ -24,7 +24,7 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
-namespace DemoCQRSHookUsage\Domain\Reviewer\Exception;
+namespace DemoCQRSHooksUsage\Domain\Reviewer\Exception;
 
 use PrestaShop\PrestaShop\Core\Domain\Exception\DomainException;
 

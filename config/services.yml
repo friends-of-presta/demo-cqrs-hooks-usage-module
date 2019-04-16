@@ -3,10 +3,10 @@ services:
     public: true
 
   democqrshooksusage.domain.reviewer.command_handler.toggle_is_allowed_to_review_handler:
-    class: 'DemoCQRSHookUsage\Domain\Reviewer\CommandHandler\ToggleIsAllowedToReviewHandler'
+    class: 'DemoCQRSHooksUsage\Domain\Reviewer\CommandHandler\ToggleIsAllowedToReviewHandler'
     arguments:
       - '@doctrine.dbal.default_connection'
       - '%database_prefix%'
     tags:
       - name: tactician.handler
-        command: 'DemoCQRSHookUsage\Domain\Reviewer\Command\ToggleIsAllowedToReviewCommand'
+        command: 'DemoCQRSHooksUsage\Domain\Reviewer\Command\ToggleIsAllowedToReviewCommand'

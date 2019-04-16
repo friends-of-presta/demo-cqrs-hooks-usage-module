@@ -2,6 +2,6 @@ ps_democqrshooksusage_toggle_is_allowed_for_review:
   path: demo-cqrs-hook-usage/{customerId}/toggle-is-allowed-for-review
   methods: [POST]
   defaults:
-    _controller: 'DemoCQRSHookUsage\Controller\Admin\CustomerReviewController::toggleIsAllowedForReviewAction'
+    _controller: 'DemoCQRSHooksUsage\Controller\Admin\CustomerReviewController::toggleIsAllowedForReviewAction'
   requirements:
     customerId: \d+

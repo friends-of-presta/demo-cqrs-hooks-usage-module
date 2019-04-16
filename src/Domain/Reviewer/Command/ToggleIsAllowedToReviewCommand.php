@@ -24,7 +24,7 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
-namespace DemoCQRSHookUsage\Domain\Reviewer\Command;
+namespace DemoCQRSHooksUsage\Domain\Reviewer\Command;
 
 use PrestaShop\PrestaShop\Core\Domain\Customer\Exception\CustomerException;
 use PrestaShop\PrestaShop\Core\Domain\Customer\ValueObject\CustomerId;
