@@ -93,6 +93,8 @@ class Ps_DemoCQRSHooksUsage extends Module
             // {block_prefix} is either retrieved automatically by its type. E.g "ManufacturerType" will be "manufacturer"
             // or it can be modified in form type by overriding "getBlockPrefix" function
             $this->registerHook('actioncustomerFormBuilderModifier') &&
+            $this->registerHook('actionAfterCreatecustomerFormHandler') &&
+            $this->registerHook('actionAfterUpdatecustomerFormHandler') &&
             $this->installTables()
         ;
     }
@@ -179,9 +181,9 @@ class Ps_DemoCQRSHooksUsage extends Module
     /**
      * Hook allows to modify Customers form and add aditional form fields as well as modify or add new data to the forms.
      *
-     * @param $params
+     * @param array $params
      */
-    public function hookactioncustomerFormBuilderModifier($params)
+    public function hookactioncustomerFormBuilderModifier(array $params)
     {
         /** @var FormBuilderInterface $formBuilder */
         $formBuilder = $params['form_builder'];
@@ -196,6 +198,21 @@ class Ps_DemoCQRSHooksUsage extends Module
         $params['data']['is_allowed_for_review'] = $reviewerSettings->isAllowedForReview();
 
         $formBuilder->setData($params['data']);
+    }
+
+    /**
+     * Hook allows to modify Customers form and add aditional form fields as well as modify or add new data to the forms.
+     *
+     * @param array $params
+     */
+    public function hookactionAfterUpdatecustomerFormHandler(array $params)
+    {
+        //todo: test error handling and raise an issue if its hard to do that
+    }
+
+    public function hookactionAfterCreatecustomerFormHandler(array $params)
+    {
+        //todo: test error handling and raise an issue if its hard to do that
     }
 
     /**
