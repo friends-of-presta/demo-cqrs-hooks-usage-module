@@ -24,7 +24,10 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
+use DemoCQRSHooksUsage\Domain\Reviewer\Query\GetReviewerSettingsForForm;
+use DemoCQRSHooksUsage\Domain\Reviewer\QueryResult\ReviewerSettingsForForm;
 use Doctrine\DBAL\Query\QueryBuilder;
+use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ToggleColumn;
 use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
 use PrestaShop\PrestaShop\Core\Grid\Filter\Filter;
@@ -97,7 +100,7 @@ class Ps_DemoCQRSHooksUsage extends Module
     }
 
     /**
-     * Hooks allows to modify Customers grid definition.
+     * Hook allows to modify Customers grid definition.
      * This hook is a right place to add/remove columns or actions (bulk, grid).
      *
      * @param array $params
@@ -131,7 +134,7 @@ class Ps_DemoCQRSHooksUsage extends Module
     }
 
     /**
-     * Hooks allows to modify Customers query builder and add custom sql statements.
+     * Hook allows to modify Customers query builder and add custom sql statements.
      *
      * @param array $params
      */
@@ -170,12 +173,24 @@ class Ps_DemoCQRSHooksUsage extends Module
         }
     }
 
+    /**
+     * Hook allows to modify Customers form and add aditional form fields as well as modify or add new data to the forms.
+     *
+     * @param $params
+     */
     public function hookactioncustomerFormBuilderModifier($params)
     {
         /** @var FormBuilderInterface $formBuilder */
         $formBuilder = $params['form_builder'];
         $formBuilder->add('is_allowed_for_review', SwitchType::class);
-        $params['data']['is_allowed_for_review'] = true;
+
+        /** @var CommandBusInterface $queryBus */
+        $queryBus = $this->get('prestashop.core.query_bus');
+
+        /** @var ReviewerSettingsForForm $reviewerSettings */
+        $reviewerSettings = $queryBus->handle(new GetReviewerSettingsForForm($params['id']));
+
+        $params['data']['is_allowed_for_review'] = $reviewerSettings->isAllowedForReview();
 
         $formBuilder->setData($params['data']);
     }

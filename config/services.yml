@@ -10,3 +10,12 @@ services:
     tags:
       - name: tactician.handler
         command: 'DemoCQRSHooksUsage\Domain\Reviewer\Command\ToggleIsAllowedToReviewCommand'
+
+  democqrshooksusage.domain.reviewer.query_handler.get_reviewer_settings_for_form_handler:
+    class: 'DemoCQRSHooksUsage\Domain\Reviewer\QueryHandler\GetReviewerSettingsForFormHandler'
+    arguments:
+      - '@doctrine.dbal.default_connection'
+      - '%database_prefix%'
+    tags:
+      - name: tactician.handler
+        command: 'DemoCQRSHooksUsage\Domain\Reviewer\Query\GetReviewerSettingsForForm'
