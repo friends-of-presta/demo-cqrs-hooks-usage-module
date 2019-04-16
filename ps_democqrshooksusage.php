@@ -88,7 +88,10 @@ class Ps_DemoCQRSHooksUsage extends Module
             $this->registerHook('actionCustomerGridDefinitionModifier') &&
             // Register hook to allow Customer grid query modifications which allows to add any sql condition.
             $this->registerHook('actionCustomerGridQueryBuilderModifier') &&
-            //todo: dock of how to get name
+            // Register hook to allow overriding customer form
+            // this structure: "action{block_prefix}FormBuilderModifier", in this case "block_prefix" is "customer"
+            // {block_prefix} is either retrieved automatically by its type. E.g "ManufacturerType" will be "manufacturer"
+            // or it can be modified in form type by overriding "getBlockPrefix" function
             $this->registerHook('actioncustomerFormBuilderModifier') &&
             $this->installTables()
         ;

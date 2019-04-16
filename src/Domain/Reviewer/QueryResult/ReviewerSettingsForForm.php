@@ -26,6 +26,9 @@
 
 namespace DemoCQRSHooksUsage\Domain\Reviewer\QueryResult;
 
+/**
+ * Holds data used in modified customers form.
+ */
 class ReviewerSettingsForForm
 {
     /**
