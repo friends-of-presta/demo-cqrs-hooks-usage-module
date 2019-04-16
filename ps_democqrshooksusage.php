@@ -27,7 +27,9 @@
 use Doctrine\DBAL\Query\QueryBuilder;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ToggleColumn;
 use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
+use PrestaShop\PrestaShop\Core\Grid\Filter\Filter;
 use PrestaShop\PrestaShop\Core\Search\Filters\CustomerFilters;
+use PrestaShopBundle\Form\Admin\Type\YesAndNoChoiceType;
 
 //todo: demonstrate how include custom js extensions for existing grids maybe?.
 //todo: not a single translation works for this module
@@ -117,6 +119,11 @@ class Ps_DemoCQRSHooksUsage extends Module
                     ])
             )
         ;
+
+        $definition->getFilters()->add(
+            (new Filter('is_allowed_for_review', YesAndNoChoiceType::class))
+            ->setAssociatedColumn('is_allowed_for_review')
+        );
     }
 
     /**
@@ -145,6 +152,17 @@ class Ps_DemoCQRSHooksUsage extends Module
 
         if ('is_allowed_for_review' === $searchCriteria->getOrderBy()) {
             $searchQueryBuilder->orderBy('dcur.`is_allowed_for_review`', $searchCriteria->getOrderWay());
+        }
+
+        foreach ($searchCriteria->getFilters() as $filterName => $filterValue) {
+            if ('is_allowed_for_review' === $filterName) {
+                $searchQueryBuilder->andWhere('dcur.`is_allowed_for_review` = :is_allowed_for_review');
+                $searchQueryBuilder->setParameter('is_allowed_for_review', $filterValue);
+
+                if (!$filterValue) {
+                    $searchQueryBuilder->orWhere('dcur.`is_allowed_for_review` IS NULL');
+                }
+            }
         }
     }
 
