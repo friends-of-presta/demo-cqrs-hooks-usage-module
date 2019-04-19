@@ -25,6 +25,9 @@
  */
 
 use DemoCQRSHooksUsage\Domain\Reviewer\Command\UpdateIsAllowedToReviewCommand;
+use DemoCQRSHooksUsage\Domain\Reviewer\Exception\CannotCreateReviewerException;
+use DemoCQRSHooksUsage\Domain\Reviewer\Exception\CannotToggleAllowedToReviewStatusException;
+use DemoCQRSHooksUsage\Domain\Reviewer\Exception\ReviewerException;
 use DemoCQRSHooksUsage\Domain\Reviewer\Query\GetReviewerSettingsForForm;
 use DemoCQRSHooksUsage\Domain\Reviewer\QueryResult\ReviewerSettingsForForm;
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -38,6 +41,7 @@ use PrestaShopBundle\Form\Admin\Type\SwitchType;
 use PrestaShopBundle\Form\Admin\Type\YesAndNoChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
 //todo: demonstrate how include custom js extensions for existing grids maybe?.
 //todo: not a single translation works for this module
@@ -246,10 +250,14 @@ class Ps_DemoCQRSHooksUsage extends Module
         /** @var CommandBusInterface $commandBus */
         $commandBus = $this->get('prestashop.core.command_bus');
 
-        $commandBus->handle(new UpdateIsAllowedToReviewCommand(
-            $customerId,
-            $isAllowedForReview
-        ));
+        try {
+            $commandBus->handle(new UpdateIsAllowedToReviewCommand(
+                $customerId,
+                $isAllowedForReview
+            ));
+        } catch (ReviewerException $exception) {
+            $this->handleException($exception);
+        }
     }
 
     /**
@@ -281,5 +289,49 @@ class Ps_DemoCQRSHooksUsage extends Module
         $sql = 'DROP TABLE IF EXISTS `' . pSQL(_DB_PREFIX_) . 'democqrshooksusage_reviewer`';
 
         return Db::getInstance()->execute($sql);
+    }
+
+    /**
+     * Handles exceptions and displays message in more user friendly form.
+     *
+     * @param ReviewerException $exception
+     */
+    private function handleException(ReviewerException $exception)
+    {
+        $exceptionDictionary = [
+            CannotCreateReviewerException::class => $this->getTranslator()->trans(
+                'Failed to create a record for customer',
+                [],
+                'Modules.Ps_DemoCQRSHooksUsage'
+            ),
+            CannotToggleAllowedToReviewStatusException::class => $this->getTranslator()->trans(
+                'Failed to toggle is allowed to review status',
+                [],
+                'Modules.Ps_DemoCQRSHooksUsage'
+            ),
+        ];
+
+        $exceptionType = get_class($exception);
+
+        /** @var FlashBagInterface $flashBag */
+        $flashBag = $this->get('session')->getFlashBag();
+
+
+        if (isset($exceptionDictionary[$exceptionType])) {
+            $flashBag->add('error', $exceptionDictionary[$exceptionType]);
+
+            return;
+        }
+
+        $fallbackMessage = $this->getTranslator()->trans(
+            'An unexpected error occurred. [%type% code %code%]',
+            [
+                '%type%' => $exceptionType,
+                '%code%' => $exception->getCode(),
+            ],
+            'Admin.Notifications.Error'
+        );
+
+        $flashBag->add('error', $fallbackMessage);
     }
 }

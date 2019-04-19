@@ -61,7 +61,7 @@ class UpdateIsAllowedToReviewHandler extends AbstractReviewerHandler
         }
 
         $reviewer->is_allowed_for_review = $command->isAllowedToReview();
-
+        
         try {
             if (false === $reviewer->update()) {
                 throw new CannotToggleAllowedToReviewStatusException(
