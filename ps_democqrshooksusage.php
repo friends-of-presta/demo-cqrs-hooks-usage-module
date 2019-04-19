@@ -212,7 +212,30 @@ class Ps_DemoCQRSHooksUsage extends Module
      */
     public function hookactionAfterUpdatecustomerFormHandler(array $params)
     {
+        $this->updateCustomerReviewStatus($params);
+    }
+
+    /**
+     * Hook allows to modify Customers form and add aditional form fields as well as modify or add new data to the forms.
+     *
+     * @param array $params
+     *
+     * @throws CustomerException
+     */
+    public function hookactionAfterCreatecustomerFormHandler(array $params)
+    {
+        $this->updateCustomerReviewStatus($params);
+    }
+
+    /**
+     * @param array $params
+     *
+     * @throws CustomerException
+     */
+    private function updateCustomerReviewStatus(array $params)
+    {
         //todo: a better would be to grab the data from array?
+
         $customerId = $params['id'];
         /** @var Request $request */
         $request = $params['request'];
@@ -220,27 +243,6 @@ class Ps_DemoCQRSHooksUsage extends Module
         $customerFormData = $request->get('customer');
         $isAllowedForReview = (bool) $customerFormData['is_allowed_for_review'];
 
-        $this->updateCustomerReviewStatus($customerId, $isAllowedForReview);
-    }
-
-    /**
-     * Hook allows to modify Customers form and add aditional form fields as well as modify or add new data to the forms.
-     *
-     * @param array $params
-     */
-    public function hookactionAfterCreatecustomerFormHandler(array $params)
-    {
-        //todo: test error handling and raise an issue if its hard to do that
-    }
-
-    /**
-     * @param $customerId
-     * @param $isAllowedForReview
-     *
-     * @throws CustomerException
-     */
-    private function updateCustomerReviewStatus($customerId, $isAllowedForReview)
-    {
         /** @var CommandBusInterface $commandBus */
         $commandBus = $this->get('prestashop.core.command_bus');
 
