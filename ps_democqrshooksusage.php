@@ -24,10 +24,12 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
+use DemoCQRSHooksUsage\Domain\Reviewer\Command\UpdateIsAllowedToReviewCommand;
 use DemoCQRSHooksUsage\Domain\Reviewer\Query\GetReviewerSettingsForForm;
 use DemoCQRSHooksUsage\Domain\Reviewer\QueryResult\ReviewerSettingsForForm;
 use Doctrine\DBAL\Query\QueryBuilder;
 use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
+use PrestaShop\PrestaShop\Core\Domain\Customer\Exception\CustomerException;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ToggleColumn;
 use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
 use PrestaShop\PrestaShop\Core\Grid\Filter\Filter;
@@ -35,6 +37,7 @@ use PrestaShop\PrestaShop\Core\Search\Filters\CustomerFilters;
 use PrestaShopBundle\Form\Admin\Type\SwitchType;
 use PrestaShopBundle\Form\Admin\Type\YesAndNoChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 //todo: demonstrate how include custom js extensions for existing grids maybe?.
 //todo: not a single translation works for this module
@@ -204,15 +207,47 @@ class Ps_DemoCQRSHooksUsage extends Module
      * Hook allows to modify Customers form and add aditional form fields as well as modify or add new data to the forms.
      *
      * @param array $params
+     *
+     * @throws CustomerException
      */
     public function hookactionAfterUpdatecustomerFormHandler(array $params)
+    {
+        //todo: a better would be to grab the data from array?
+        $customerId = $params['id'];
+        /** @var Request $request */
+        $request = $params['request'];
+        /** @var array $customerFormData */
+        $customerFormData = $request->get('customer');
+        $isAllowedForReview = (bool) $customerFormData['is_allowed_for_review'];
+
+        $this->updateCustomerReviewStatus($customerId, $isAllowedForReview);
+    }
+
+    /**
+     * Hook allows to modify Customers form and add aditional form fields as well as modify or add new data to the forms.
+     *
+     * @param array $params
+     */
+    public function hookactionAfterCreatecustomerFormHandler(array $params)
     {
         //todo: test error handling and raise an issue if its hard to do that
     }
 
-    public function hookactionAfterCreatecustomerFormHandler(array $params)
+    /**
+     * @param $customerId
+     * @param $isAllowedForReview
+     *
+     * @throws CustomerException
+     */
+    private function updateCustomerReviewStatus($customerId, $isAllowedForReview)
     {
-        //todo: test error handling and raise an issue if its hard to do that
+        /** @var CommandBusInterface $commandBus */
+        $commandBus = $this->get('prestashop.core.command_bus');
+
+        $commandBus->handle(new UpdateIsAllowedToReviewCommand(
+            $customerId,
+            $isAllowedForReview
+        ));
     }
 
     /**

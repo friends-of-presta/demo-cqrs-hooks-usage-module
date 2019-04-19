@@ -26,19 +26,16 @@
 
 namespace DemoCQRSHooksUsage\Domain\Reviewer\CommandHandler;
 
-use DemoCQRSHooksUsage\Domain\Reviewer\Command\ToggleIsAllowedToReviewCommand;
-use DemoCQRSHooksUsage\Domain\Reviewer\Exception\CannotCreateReviewerException;
+use DemoCQRSHooksUsage\Domain\Reviewer\Command\UpdateIsAllowedToReviewCommand;
 use DemoCQRSHooksUsage\Domain\Reviewer\Exception\CannotToggleAllowedToReviewStatusException;
 use DemoCQRSHooksUsage\Entity\Reviewer;
 use DemoCQRSHooksUsage\Repository\ReviewerRepository;
-use Doctrine\DBAL\Connection;
-use PDO;
 use PrestaShopException;
 
 /**
- * Used for toggling the customer if is allowed to make a review.
+ * used to update customers review status.
  */
-class ToggleIsAllowedToReviewHandler extends AbstractReviewerHandler
+class UpdateIsAllowedToReviewHandler extends AbstractReviewerHandler
 {
     /**
      * @var ReviewerRepository
@@ -53,13 +50,7 @@ class ToggleIsAllowedToReviewHandler extends AbstractReviewerHandler
         $this->reviewerRepository = $reviewerRepository;
     }
 
-    /**
-     * @param ToggleIsAllowedToReviewCommand $command
-     *
-     * @throws CannotCreateReviewerException
-     * @throws CannotToggleAllowedToReviewStatusException
-     */
-    public function handle(ToggleIsAllowedToReviewCommand $command)
+    public function handle(UpdateIsAllowedToReviewCommand $command)
     {
         $reviewerId = $this->reviewerRepository->findIdByCustomer($command->getCustomerId()->getValue());
 
@@ -69,7 +60,7 @@ class ToggleIsAllowedToReviewHandler extends AbstractReviewerHandler
             $reviewer = $this->createReviewer($command->getCustomerId()->getValue());
         }
 
-        $reviewer->is_allowed_for_review = (bool) !$reviewer->is_allowed_for_review;
+        $reviewer->is_allowed_for_review = $command->isAllowedToReview();
 
         try {
             if (false === $reviewer->update()) {

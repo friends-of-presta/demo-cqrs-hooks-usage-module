@@ -24,40 +24,51 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
-namespace DemoCQRSHooksUsage\Domain\Reviewer\QueryHandler;
+namespace DemoCQRSHooksUsage\Domain\Reviewer\Command;
 
-use DemoCQRSHooksUsage\Domain\Reviewer\Query\GetReviewerSettingsForForm;
-use DemoCQRSHooksUsage\Domain\Reviewer\QueryResult\ReviewerSettingsForForm;
-use DemoCQRSHooksUsage\Repository\ReviewerRepository;
+use PrestaShop\PrestaShop\Core\Domain\Customer\Exception\CustomerException;
+use PrestaShop\PrestaShop\Core\Domain\Customer\ValueObject\CustomerId;
 
 /**
- * Gets reviewer settings data ready for form display.
+ * used to update customers review status.
  */
-class GetReviewerSettingsForFormHandler
+class UpdateIsAllowedToReviewCommand
 {
+    /**
+     * @var CustomerId
+     */
+    private $customerId;
 
     /**
-     * @var ReviewerRepository
+     * @var bool
      */
-    private $reviewerRepository;
+    private $isAllowedToReview;
 
     /**
-     * @param ReviewerRepository $reviewerRepository
+     * @param int $customerId
+     * @param bool $isAllowedToReview
+     *
+     * @throws CustomerException
      */
-    public function __construct(ReviewerRepository $reviewerRepository)
+    public function __construct($customerId, $isAllowedToReview)
     {
-
-        $this->reviewerRepository = $reviewerRepository;
+        $this->customerId = new CustomerId($customerId);
+        $this->isAllowedToReview = $isAllowedToReview;
     }
 
-    public function handle(GetReviewerSettingsForForm $query)
+    /**
+     * @return CustomerId
+     */
+    public function getCustomerId()
     {
-        if (null === $query->getCustomerId()) {
-            return new ReviewerSettingsForForm(false);
-        }
+        return $this->customerId;
+    }
 
-        return new ReviewerSettingsForForm(
-            $this->reviewerRepository->getIsAllowedToReviewStatus($query->getCustomerId()->getValue())
-        );
+    /**
+     * @return bool
+     */
+    public function isAllowedToReview()
+    {
+        return $this->isAllowedToReview;
     }
 }
