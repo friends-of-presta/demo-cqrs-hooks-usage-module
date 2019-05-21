@@ -72,6 +72,8 @@ class CustomerReviewController extends FrameworkBundleAdminController
      * Gets error message mappings which are later used to display friendly user error message instead of the
      * exception message.
      *
+     * @see https://devdocs.prestashop.com/1.7/development/architecture/domain-exceptions/ for more detailed explanation
+     *
      * @return array
      */
     private function getErrorMessageMapping()
