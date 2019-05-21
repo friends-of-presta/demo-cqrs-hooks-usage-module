@@ -59,7 +59,7 @@ class AbstractReviewerHandler
                 );
             }
         } catch (PrestaShopException $exception) {
-            /**
+            /*
              * @see https://devdocs.prestashop.com/1.7/development/architecture/domain-exceptions/
              */
             throw new CannotCreateReviewerException(

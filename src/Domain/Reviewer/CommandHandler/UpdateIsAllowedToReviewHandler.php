@@ -61,7 +61,7 @@ class UpdateIsAllowedToReviewHandler extends AbstractReviewerHandler
         }
 
         $reviewer->is_allowed_for_review = $command->isAllowedToReview();
-        
+
         try {
             if (false === $reviewer->update()) {
                 throw new CannotToggleAllowedToReviewStatusException(
@@ -69,7 +69,7 @@ class UpdateIsAllowedToReviewHandler extends AbstractReviewerHandler
                 );
             }
         } catch (PrestaShopException $exception) {
-            /**
+            /*
              * @see https://devdocs.prestashop.com/1.7/development/architecture/domain-exceptions/
              */
             throw new CannotToggleAllowedToReviewStatusException(

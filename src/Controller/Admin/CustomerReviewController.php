@@ -29,7 +29,6 @@ namespace DemoCQRSHooksUsage\Controller\Admin;
 use DemoCQRSHooksUsage\Domain\Reviewer\Command\ToggleIsAllowedToReviewCommand;
 use DemoCQRSHooksUsage\Domain\Reviewer\Exception\CannotCreateReviewerException;
 use DemoCQRSHooksUsage\Domain\Reviewer\Exception\CannotToggleAllowedToReviewStatusException;
-use DemoCQRSHooksUsage\Domain\Reviewer\Exception\ReviewerException;
 use PrestaShop\PrestaShop\Core\Domain\Customer\Exception\CustomerException;
 use PrestaShop\PrestaShop\Core\Domain\Exception\DomainException;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
@@ -37,6 +36,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * This controller holds all custom actions which are added by extending "Sell > Customers" page.
+ *
  * @see https://devdocs.prestashop.com/1.7/modules/concepts/controllers/admin-controllers/ for more details.
  */
 class CustomerReviewController extends FrameworkBundleAdminController
@@ -51,14 +51,14 @@ class CustomerReviewController extends FrameworkBundleAdminController
     public function toggleIsAllowedForReviewAction($customerId)
     {
         try {
-            /**
+            /*
              * This part demonstrates the usage of CQRS pattern command to perform write operation for Reviewer entity.
              * @see https://devdocs.prestashop.com/1.7/development/architecture/cqrs/ for more detailed information.
              *
              * As this is our recommended approach of writing the data but we not force to use this pattern in modules -
              * you can use directly an entity here or wrap it in custom service class.
              */
-            $this->getCommandBus()->handle(new ToggleIsAllowedToReviewCommand((int)$customerId));
+            $this->getCommandBus()->handle(new ToggleIsAllowedToReviewCommand((int) $customerId));
 
             $this->addFlash('success', $this->trans('Successful update.', 'Admin.Notifications.Success'));
         } catch (DomainException $e) {
@@ -90,7 +90,7 @@ class CustomerReviewController extends FrameworkBundleAdminController
             CannotToggleAllowedToReviewStatusException::class => $this->trans(
                 'An error occurred while updating the status.',
                 'Admin.Notifications.Error'
-            )
+            ),
         ];
     }
 }

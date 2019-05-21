@@ -41,11 +41,11 @@ class Reviewer extends ObjectModel
     public $is_allowed_for_review;
 
     public static $definition = [
-        'table'   => 'democqrshooksusage_reviewer',
+        'table' => 'democqrshooksusage_reviewer',
         'primary' => 'id_reviewer',
         'fields' => [
             'id_customer' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'],
             'is_allowed_for_review' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
-        ]
+        ],
     ];
 }

@@ -23,7 +23,6 @@
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-
 use DemoCQRSHooksUsage\Domain\Reviewer\Command\UpdateIsAllowedToReviewCommand;
 use DemoCQRSHooksUsage\Domain\Reviewer\Exception\CannotCreateReviewerException;
 use DemoCQRSHooksUsage\Domain\Reviewer\Exception\CannotToggleAllowedToReviewStatusException;
@@ -78,6 +77,8 @@ class Ps_DemoCQRSHooksUsage extends Module
 
     /**
      * Install module and register hooks to allow grid modification.
+     *
+     * @see https://devdocs.prestashop.com/1.7/modules/concepts/hooks/use-hooks-on-modern-pages/
      *
      * @return bool
      */
@@ -198,18 +199,19 @@ class Ps_DemoCQRSHooksUsage extends Module
         ]);
 
         /**
-         * @var CommandBusInterface $queryBus
+         * @var CommandBusInterface
          */
         $queryBus = $this->get('prestashop.core.query_bus');
 
         /**
          * This part demonstrates the usage of CQRS pattern query to perform read operation from Reviewer entity.
+         *
          * @see https://devdocs.prestashop.com/1.7/development/architecture/cqrs/ for more detailed information.
          *
          * As this is our recommended approach of reading the data but we not force to use this pattern in modules -
          * you can use directly an entity here or wrap it in custom service class.
          *
-         * @var ReviewerSettingsForForm $reviewerSettings
+         * @var ReviewerSettingsForForm
          */
         $reviewerSettings = $queryBus->handle(new GetReviewerSettingsForForm($params['id']));
 
@@ -260,7 +262,7 @@ class Ps_DemoCQRSHooksUsage extends Module
         $commandBus = $this->get('prestashop.core.command_bus');
 
         try {
-            /**
+            /*
              * This part demonstrates the usage of CQRS pattern command to perform write operation for Reviewer entity.
              * @see https://devdocs.prestashop.com/1.7/development/architecture/cqrs/ for more detailed information.
              *
@@ -331,7 +333,6 @@ class Ps_DemoCQRSHooksUsage extends Module
 
         /** @var FlashBagInterface $flashBag */
         $flashBag = $this->get('session')->getFlashBag();
-
 
         if (isset($exceptionDictionary[$exceptionType])) {
             $flashBag->add('error', $exceptionDictionary[$exceptionType]);

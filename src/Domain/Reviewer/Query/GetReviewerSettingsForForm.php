@@ -30,6 +30,7 @@ use PrestaShop\PrestaShop\Core\Domain\Customer\ValueObject\CustomerId;
 
 /**
  * Gets reviewer settings data ready for form display.
+ *
  * @see \DemoCQRSHooksUsage\Domain\Reviewer\QueryHandler\GetReviewerSettingsForFormHandler how the data is retrieved.
  */
 class GetReviewerSettingsForForm

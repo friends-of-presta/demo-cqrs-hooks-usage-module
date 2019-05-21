@@ -31,6 +31,7 @@ use PrestaShop\PrestaShop\Core\Domain\Customer\ValueObject\CustomerId;
 
 /**
  * Used for toggling the customer if is allowed to make a review.
+ *
  * @see \DemoCQRSHooksUsage\Domain\Reviewer\CommandHandler\ToggleIsAllowedToReviewHandler how the data is handled.
  */
 class ToggleIsAllowedToReviewCommand

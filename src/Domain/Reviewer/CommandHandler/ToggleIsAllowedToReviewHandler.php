@@ -31,8 +31,6 @@ use DemoCQRSHooksUsage\Domain\Reviewer\Exception\CannotCreateReviewerException;
 use DemoCQRSHooksUsage\Domain\Reviewer\Exception\CannotToggleAllowedToReviewStatusException;
 use DemoCQRSHooksUsage\Entity\Reviewer;
 use DemoCQRSHooksUsage\Repository\ReviewerRepository;
-use Doctrine\DBAL\Connection;
-use PDO;
 use PrestaShopException;
 
 /**
@@ -78,7 +76,7 @@ class ToggleIsAllowedToReviewHandler extends AbstractReviewerHandler
                 );
             }
         } catch (PrestaShopException $exception) {
-            /**
+            /*
              * @see https://devdocs.prestashop.com/1.7/development/architecture/domain-exceptions/
              */
             throw new CannotToggleAllowedToReviewStatusException(

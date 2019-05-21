@@ -35,7 +35,6 @@ use DemoCQRSHooksUsage\Repository\ReviewerRepository;
  */
 class GetReviewerSettingsForFormHandler
 {
-
     /**
      * @var ReviewerRepository
      */
@@ -46,7 +45,6 @@ class GetReviewerSettingsForFormHandler
      */
     public function __construct(ReviewerRepository $reviewerRepository)
     {
-
         $this->reviewerRepository = $reviewerRepository;
     }
 

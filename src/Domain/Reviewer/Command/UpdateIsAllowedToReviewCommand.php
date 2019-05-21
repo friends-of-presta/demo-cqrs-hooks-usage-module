@@ -31,6 +31,7 @@ use PrestaShop\PrestaShop\Core\Domain\Customer\ValueObject\CustomerId;
 
 /**
  * used to update customers review status.
+ *
  * @see \DemoCQRSHooksUsage\Domain\Reviewer\CommandHandler\UpdateIsAllowedToReviewHandler how the data is handled.
  */
 class UpdateIsAllowedToReviewCommand

@@ -28,5 +28,4 @@ namespace DemoCQRSHooksUsage\Domain\Reviewer\Exception;
 
 class CannotCreateReviewerException extends ReviewerException
 {
-
 }
