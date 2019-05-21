@@ -43,8 +43,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
-//todo: demonstrate how include custom js extensions for existing grids maybe?.
-//todo: not a single translation works for this module
 /**
  * Class Ps_DemoCQRSHooksUsage demonstrates the usage of CQRS pattern and hooks.
  */
@@ -199,10 +197,20 @@ class Ps_DemoCQRSHooksUsage extends Module
             'required' => false,
         ]);
 
-        /** @var CommandBusInterface $queryBus */
+        /**
+         * @var CommandBusInterface $queryBus
+         */
         $queryBus = $this->get('prestashop.core.query_bus');
 
-        /** @var ReviewerSettingsForForm $reviewerSettings */
+        /**
+         * This part demonstrates the usage of CQRS pattern query to perform read operation from Reviewer entity.
+         * @see https://devdocs.prestashop.com/1.7/development/architecture/cqrs/ for more detailed information.
+         *
+         * As this is our recommended approach of reading the data but we not force to use this pattern in modules -
+         * you can use directly an entity here or wrap it in custom service class.
+         *
+         * @var ReviewerSettingsForForm $reviewerSettings
+         */
         $reviewerSettings = $queryBus->handle(new GetReviewerSettingsForForm($params['id']));
 
         $params['data']['is_allowed_for_review'] = $reviewerSettings->isAllowedForReview();
@@ -219,12 +227,11 @@ class Ps_DemoCQRSHooksUsage extends Module
      */
     public function hookActionAfterUpdateCustomerFormHandler(array $params)
     {
-        //todo: test again
         $this->updateCustomerReviewStatus($params);
     }
 
     /**
-     * Hook allows to modify Customers form and add aditional form fields as well as modify or add new data to the forms.
+     * Hook allows to modify Customers form and add additional form fields as well as modify or add new data to the forms.
      *
      * @param array $params
      *
@@ -242,8 +249,6 @@ class Ps_DemoCQRSHooksUsage extends Module
      */
     private function updateCustomerReviewStatus(array $params)
     {
-        //todo: a better would be to grab the data from array?
-
         $customerId = $params['id'];
         /** @var Request $request */
         $request = $params['request'];
@@ -255,6 +260,13 @@ class Ps_DemoCQRSHooksUsage extends Module
         $commandBus = $this->get('prestashop.core.command_bus');
 
         try {
+            /**
+             * This part demonstrates the usage of CQRS pattern command to perform write operation for Reviewer entity.
+             * @see https://devdocs.prestashop.com/1.7/development/architecture/cqrs/ for more detailed information.
+             *
+             * As this is our recommended approach of writing the data but we not force to use this pattern in modules -
+             * you can use directly an entity here or wrap it in custom service class.
+             */
             $commandBus->handle(new UpdateIsAllowedToReviewCommand(
                 $customerId,
                 $isAllowedForReview
