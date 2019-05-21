@@ -46,7 +46,7 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 //todo: demonstrate how include custom js extensions for existing grids maybe?.
 //todo: not a single translation works for this module
 /**
- * Class Ps_DemoCQRSHooksUsage demonstrates the usage of CQRS and hooks.
+ * Class Ps_DemoCQRSHooksUsage demonstrates the usage of CQRS pattern and hooks.
  */
 class Ps_DemoCQRSHooksUsage extends Module
 {
@@ -99,9 +99,9 @@ class Ps_DemoCQRSHooksUsage extends Module
             // this structure: "action{block_prefix}FormBuilderModifier", in this case "block_prefix" is "customer"
             // {block_prefix} is either retrieved automatically by its type. E.g "ManufacturerType" will be "manufacturer"
             // or it can be modified in form type by overriding "getBlockPrefix" function
-            $this->registerHook('actioncustomerFormBuilderModifier') &&
-            $this->registerHook('actionAfterCreatecustomerFormHandler') &&
-            $this->registerHook('actionAfterUpdatecustomerFormHandler') &&
+            $this->registerHook('actionCustomerFormBuilderModifier') &&
+            $this->registerHook('actionAfterCreateCustomerFormHandler') &&
+            $this->registerHook('actionAfterUpdateCustomerFormHandler') &&
             $this->installTables()
         ;
     }
@@ -190,11 +190,14 @@ class Ps_DemoCQRSHooksUsage extends Module
      *
      * @param array $params
      */
-    public function hookactioncustomerFormBuilderModifier(array $params)
+    public function hookActionCustomerFormBuilderModifier(array $params)
     {
         /** @var FormBuilderInterface $formBuilder */
         $formBuilder = $params['form_builder'];
-        $formBuilder->add('is_allowed_for_review', SwitchType::class);
+        $formBuilder->add('is_allowed_for_review', SwitchType::class, [
+            'label' => $this->getTranslator()->trans('Allow reviews', [], 'Modules.Ps_DemoCQRSHooksUsage'),
+            'required' => false,
+        ]);
 
         /** @var CommandBusInterface $queryBus */
         $queryBus = $this->get('prestashop.core.query_bus');
@@ -214,8 +217,9 @@ class Ps_DemoCQRSHooksUsage extends Module
      *
      * @throws CustomerException
      */
-    public function hookactionAfterUpdatecustomerFormHandler(array $params)
+    public function hookActionAfterUpdateCustomerFormHandler(array $params)
     {
+        //todo: test again
         $this->updateCustomerReviewStatus($params);
     }
 
@@ -226,7 +230,7 @@ class Ps_DemoCQRSHooksUsage extends Module
      *
      * @throws CustomerException
      */
-    public function hookactionAfterCreatecustomerFormHandler(array $params)
+    public function hookActionAfterCreateCustomerFormHandler(array $params)
     {
         $this->updateCustomerReviewStatus($params);
     }
