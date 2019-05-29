@@ -1,7 +1,7 @@
 services:
   _defaults:
     public: true
-
+#  @see  https://devdocs.prestashop.com/1.7/development/architecture/migration-guide/forms/cqrs-usage-in-forms/ for CQRS pattern usage examples.
   democqrshooksusage.domain.reviewer.command_handler.toggle_is_allowed_to_review_handler:
     class: 'DemoCQRSHooksUsage\Domain\Reviewer\CommandHandler\ToggleIsAllowedToReviewHandler'
     arguments:
