@@ -65,15 +65,15 @@ class CustomerReviewController extends FrameworkBundleAdminController
         return [
             CustomerException::class => $this->trans(
                 'Something bad happened when trying to get customer id',
-                'Modules.Ps_DemoCQRSHooksUsage'
+                'Modules.Democqrshooksusage.Customerreviewcontroller'
             ),
             CannotCreateReviewerException::class => $this->trans(
                 'Failed to create reviewer',
-                'Modules.Ps_DemoCQRSHooksUsage'
+                'Modules.Democqrshooksusage.Customerreviewcontroller'
             ),
             CannotToggleAllowedToReviewStatusException::class => $this->trans(
                 'An error occurred while updating the status.',
-                'Admin.Notifications.Error'
+                'Modules.Democqrshooksusage.Customerreviewcontroller'
             ),
         ];
     }

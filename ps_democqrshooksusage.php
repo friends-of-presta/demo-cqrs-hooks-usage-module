@@ -44,20 +44,30 @@ class Ps_DemoCQRSHooksUsage extends Module
         $this->displayName = $this->getTranslator()->trans(
             'Demo for CQRS and hooks usage',
             [],
-            'Modules.Ps_DemoCQRSHooksUsage'
+            'Modules.Democqrshooksusage.Admin'
         );
 
         $this->description =
             $this->getTranslator()->trans(
                 'Help developers to understand how to create module using new hooks and apply best practices when using CQRS',
                 [],
-                'Modules.Ps_DemoCQRSHooksUsage'
+                'Modules.Democqrshooksusage.Admin'
             );
 
         $this->ps_versions_compliancy = [
             'min' => '1.7.6.0',
             'max' => _PS_VERSION_,
         ];
+    }
+
+    /**
+     * This function is required in order to make module compatible with new translation system.
+     *
+     * @return bool
+     */
+    public function isUsingNewTranslationSystem()
+    {
+        return true;
     }
 
     /**
@@ -113,7 +123,7 @@ class Ps_DemoCQRSHooksUsage extends Module
             ->addAfter(
                 'optin',
                 (new ToggleColumn('is_allowed_for_review'))
-                    ->setName($translator->trans('Allowed for review', [], 'Modules.Ps_DemoCQRSHooksUsage'))
+                    ->setName($translator->trans('Allowed for review', [], 'Modules.Democqrshooksusage.Admin'))
                     ->setOptions([
                         'field' => 'is_allowed_for_review',
                         'primary_field' => 'id_customer',
@@ -179,7 +189,7 @@ class Ps_DemoCQRSHooksUsage extends Module
         /** @var FormBuilderInterface $formBuilder */
         $formBuilder = $params['form_builder'];
         $formBuilder->add('is_allowed_for_review', SwitchType::class, [
-            'label' => $this->getTranslator()->trans('Allow reviews', [], 'Modules.Ps_DemoCQRSHooksUsage'),
+            'label' => $this->getTranslator()->trans('Allow reviews', [], 'Modules.Democqrshooksusage.Admin'),
             'required' => false,
         ]);
 
@@ -305,12 +315,12 @@ class Ps_DemoCQRSHooksUsage extends Module
             CannotCreateReviewerException::class => $this->getTranslator()->trans(
                 'Failed to create a record for customer',
                 [],
-                'Modules.Ps_DemoCQRSHooksUsage'
+                'Modules.Democqrshooksusage.Admin'
             ),
             CannotToggleAllowedToReviewStatusException::class => $this->getTranslator()->trans(
                 'Failed to toggle is allowed to review status',
                 [],
-                'Modules.Ps_DemoCQRSHooksUsage'
+                'Modules.Democqrshooksusage.Admin'
             ),
         ];
 
