@@ -10,8 +10,6 @@
 
 namespace DemoCQRSHooksUsage\Domain\Reviewer\Exception;
 
-use PrestaShop\PrestaShop\Core\Domain\Exception\DomainException;
-
-class ReviewerException extends DomainException
+class ReviewerException extends \Exception
 {
 }
