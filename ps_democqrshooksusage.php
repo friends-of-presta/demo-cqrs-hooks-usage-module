@@ -180,7 +180,7 @@ class Ps_DemoCQRSHooksUsage extends Module
     }
 
     /**
-     * Hook allows to modify Customers form and add aditional form fields as well as modify or add new data to the forms.
+     * Hook allows to modify Customers form and add additional form fields as well as modify or add new data to the forms.
      *
      * @param array $params
      */
@@ -216,7 +216,7 @@ class Ps_DemoCQRSHooksUsage extends Module
     }
 
     /**
-     * Hook allows to modify Customers form and add aditional form fields as well as modify or add new data to the forms.
+     * Hook allows to modify Customers form and add additional form fields as well as modify or add new data to the forms.
      *
      * @param array $params
      *
@@ -242,7 +242,7 @@ class Ps_DemoCQRSHooksUsage extends Module
     /**
      * @param array $params
      *
-     * @throws CustomerException
+     * @throws \PrestaShop\PrestaShop\Core\Module\Exception\ModuleErrorException
      */
     private function updateCustomerReviewStatus(array $params)
     {
@@ -308,6 +308,8 @@ class Ps_DemoCQRSHooksUsage extends Module
      * Handles exceptions and displays message in more user friendly form.
      *
      * @param ReviewerException $exception
+     *
+     * @throws \PrestaShop\PrestaShop\Core\Module\Exception\ModuleErrorException
      */
     private function handleException(ReviewerException $exception)
     {
@@ -326,24 +328,19 @@ class Ps_DemoCQRSHooksUsage extends Module
 
         $exceptionType = get_class($exception);
 
-        /** @var FlashBagInterface $flashBag */
-        $flashBag = $this->get('session')->getFlashBag();
-
         if (isset($exceptionDictionary[$exceptionType])) {
-            $flashBag->add('error', $exceptionDictionary[$exceptionType]);
-
-            return;
+            $message = $exceptionDictionary[$exceptionType];
+        } else {
+            $message = $this->getTranslator()->trans(
+                'An unexpected error occurred. [%type% code %code%]',
+                [
+                    '%type%' => $exceptionType,
+                    '%code%' => $exception->getCode(),
+                ],
+                'Admin.Notifications.Error'
+            );
         }
 
-        $fallbackMessage = $this->getTranslator()->trans(
-            'An unexpected error occurred. [%type% code %code%]',
-            [
-                '%type%' => $exceptionType,
-                '%code%' => $exception->getCode(),
-            ],
-            'Admin.Notifications.Error'
-        );
-
-        $flashBag->add('error', $fallbackMessage);
+        throw new \PrestaShop\PrestaShop\Core\Module\Exception\ModuleErrorException($message);
     }
 }

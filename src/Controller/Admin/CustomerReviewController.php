@@ -13,8 +13,8 @@ namespace DemoCQRSHooksUsage\Controller\Admin;
 use DemoCQRSHooksUsage\Domain\Reviewer\Command\ToggleIsAllowedToReviewCommand;
 use DemoCQRSHooksUsage\Domain\Reviewer\Exception\CannotCreateReviewerException;
 use DemoCQRSHooksUsage\Domain\Reviewer\Exception\CannotToggleAllowedToReviewStatusException;
+use DemoCQRSHooksUsage\Domain\Reviewer\Exception\ReviewerException;
 use PrestaShop\PrestaShop\Core\Domain\Customer\Exception\CustomerException;
-use PrestaShop\PrestaShop\Core\Domain\Exception\DomainException;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -45,7 +45,7 @@ class CustomerReviewController extends FrameworkBundleAdminController
             $this->getCommandBus()->handle(new ToggleIsAllowedToReviewCommand((int) $customerId));
 
             $this->addFlash('success', $this->trans('Successful update.', 'Admin.Notifications.Success'));
-        } catch (DomainException $e) {
+        } catch (ReviewerException $e) {
             $this->addFlash('error', $this->getErrorMessageForException($e, $this->getErrorMessageMapping()));
         }
 
