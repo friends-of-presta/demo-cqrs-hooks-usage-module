@@ -247,10 +247,8 @@ class Ps_DemoCQRSHooksUsage extends Module
     private function updateCustomerReviewStatus(array $params)
     {
         $customerId = $params['id'];
-        /** @var Request $request */
-        $request = $params['request'];
         /** @var array $customerFormData */
-        $customerFormData = $request->get('customer');
+        $customerFormData = $params['form_data'];
         $isAllowedForReview = (bool) $customerFormData['is_allowed_for_review'];
 
         /** @var CommandBusInterface $commandBus */
