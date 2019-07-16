@@ -96,6 +96,7 @@ class Ps_DemoCQRSHooksUsage extends Module
             // or it can be modified in form type by overriding "getBlockPrefix" function
             $this->registerHook('actionCustomerFormBuilderModifier') &&
             $this->registerHook('actionAfterCreateCustomerFormHandler') &&
+            // Used for adding css or javascript files from the module in admin controllers context
             $this->registerHook('actionAdminControllerSetMedia') &&
             $this->installTables()
         ;
@@ -106,6 +107,9 @@ class Ps_DemoCQRSHooksUsage extends Module
         return parent::uninstall() && $this->uninstallTables();
     }
 
+    /**
+     * Used for adding css or javascript files from the module in admin controllers context.
+     */
     public function hookActionAdminControllerSetMedia()
     {
         if (!$this->isSymfonyContext()) {
