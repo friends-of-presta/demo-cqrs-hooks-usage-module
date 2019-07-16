@@ -17,9 +17,11 @@ use DemoCQRSHooksUsage\Domain\Reviewer\QueryResult\ReviewerSettingsForForm;
 use Doctrine\DBAL\Query\QueryBuilder;
 use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 use PrestaShop\PrestaShop\Core\Domain\Customer\Exception\CustomerException;
+use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\PositionColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ToggleColumn;
 use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
 use PrestaShop\PrestaShop\Core\Grid\Filter\Filter;
+use PrestaShop\PrestaShop\Core\Module\Exception\ModuleErrorException;
 use PrestaShop\PrestaShop\Core\Search\Filters\CustomerFilters;
 use PrestaShopBundle\Form\Admin\Type\SwitchType;
 use PrestaShopBundle\Form\Admin\Type\YesAndNoChoiceType;
@@ -131,6 +133,16 @@ class Ps_DemoCQRSHooksUsage extends Module
                         'route_param_name' => 'customerId',
                     ])
             )
+            ->addBefore(
+                'optin',
+                (new PositionColumn('position'))
+                    ->setName($translator->trans('Position', [], 'Modules.Democqrshooksusage.Admin'))
+                    ->setOptions([
+                        'id_field' => 'id_customer',
+                        'position_field' => 'position',
+                        'update_route' => 'ps_democqrshooksusage_update_position',
+                    ])
+            )
         ;
 
         $definition->getFilters()->add(
@@ -156,11 +168,22 @@ class Ps_DemoCQRSHooksUsage extends Module
             'IF(dcur.`is_allowed_for_review` IS NULL,0,dcur.`is_allowed_for_review`) AS `is_allowed_for_review`'
         );
 
+        $searchQueryBuilder->addSelect(
+            'IF(dcup.`position` IS NULL, 0, dcup.`position`) AS `position`'
+        );
+
         $searchQueryBuilder->leftJoin(
             'c',
             '`' . pSQL(_DB_PREFIX_) . 'democqrshooksusage_reviewer`',
             'dcur',
             'dcur.`id_customer` = c.`id_customer`'
+        );
+
+        $searchQueryBuilder->leftJoin(
+            'c',
+            '`' . pSQL(_DB_PREFIX_) . 'democqrshooksusage_position`',
+            'dcup',
+            'dcup.`id_customer` = c.`id_customer`'
         );
 
         if ('is_allowed_for_review' === $searchCriteria->getOrderBy()) {
@@ -242,7 +265,7 @@ class Ps_DemoCQRSHooksUsage extends Module
     /**
      * @param array $params
      *
-     * @throws \PrestaShop\PrestaShop\Core\Module\Exception\ModuleErrorException
+     * @throws ModuleErrorException
      */
     private function updateCustomerReviewStatus(array $params)
     {
@@ -287,6 +310,14 @@ class Ps_DemoCQRSHooksUsage extends Module
             ) ENGINE=' . pSQL(_MYSQL_ENGINE_) . ' COLLATE=utf8_unicode_ci;
         ';
 
+        $sql .= '
+            CREATE TABLE IF NOT EXISTS `' . pSQL(_DB_PREFIX_) . 'democqrshooksusage_position` (
+                `id_customer` INT(10) NOT NULL,
+                `position` INT(10) NOT NULL,
+                PRIMARY KEY(`id_customer`)
+            ) ENGINE=' . pSQL(_MYSQL_ENGINE_) . ' COLLATE=utf8_unicode_ci;
+        ';
+
         return Db::getInstance()->execute($sql);
     }
 
@@ -297,7 +328,8 @@ class Ps_DemoCQRSHooksUsage extends Module
      */
     private function uninstallTables()
     {
-        $sql = 'DROP TABLE IF EXISTS `' . pSQL(_DB_PREFIX_) . 'democqrshooksusage_reviewer`';
+        $sql = 'DROP TABLE IF EXISTS `' . pSQL(_DB_PREFIX_) . 'democqrshooksusage_reviewer`;';
+        $sql .= 'DROP TABLE IF EXISTS `' . pSQL(_DB_PREFIX_) . 'democqrshooksusage_position`;';
 
         return Db::getInstance()->execute($sql);
     }
@@ -307,7 +339,7 @@ class Ps_DemoCQRSHooksUsage extends Module
      *
      * @param ReviewerException $exception
      *
-     * @throws \PrestaShop\PrestaShop\Core\Module\Exception\ModuleErrorException
+     * @throws ModuleErrorException
      */
     private function handleException(ReviewerException $exception)
     {
@@ -339,6 +371,6 @@ class Ps_DemoCQRSHooksUsage extends Module
             );
         }
 
-        throw new \PrestaShop\PrestaShop\Core\Module\Exception\ModuleErrorException($message);
+        throw new ModuleErrorException($message);
     }
 }

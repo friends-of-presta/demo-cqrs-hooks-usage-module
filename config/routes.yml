@@ -6,3 +6,9 @@ ps_democqrshooksusage_toggle_is_allowed_for_review:
     _controller: 'DemoCQRSHooksUsage\Controller\Admin\CustomerReviewController::toggleIsAllowedForReviewAction'
   requirements:
     customerId: \d+
+
+ps_democqrshooksusage_update_position:
+  path: demo-cqrs-hook-usage/update-position
+  methods: [POST]
+  defaults:
+    _controller: 'DemoCQRSHooksUsage\Controller\Admin\CustomerPositionController::updatePositionAction'
