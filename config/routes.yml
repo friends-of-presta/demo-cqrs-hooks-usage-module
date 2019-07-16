@@ -8,7 +8,9 @@ ps_democqrshooksusage_toggle_is_allowed_for_review:
     customerId: \d+
 
 ps_democqrshooksusage_update_position:
-  path: demo-cqrs-hook-usage/update-position
+  path: demo-cqrs-hook-usage/{customerId}/update-position
   methods: [POST]
   defaults:
     _controller: 'DemoCQRSHooksUsage\Controller\Admin\CustomerPositionController::updatePositionAction'
+  requirements:
+    customerId: \d+

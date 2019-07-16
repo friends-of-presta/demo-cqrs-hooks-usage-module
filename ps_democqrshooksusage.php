@@ -26,8 +26,7 @@ use PrestaShop\PrestaShop\Core\Search\Filters\CustomerFilters;
 use PrestaShopBundle\Form\Admin\Type\SwitchType;
 use PrestaShopBundle\Form\Admin\Type\YesAndNoChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Class Ps_DemoCQRSHooksUsage demonstrates the usage of CQRS pattern and hooks.
@@ -97,7 +96,7 @@ class Ps_DemoCQRSHooksUsage extends Module
             // or it can be modified in form type by overriding "getBlockPrefix" function
             $this->registerHook('actionCustomerFormBuilderModifier') &&
             $this->registerHook('actionAfterCreateCustomerFormHandler') &&
-            $this->registerHook('actionAfterUpdateCustomerFormHandler') &&
+            $this->registerHook('actionAdminControllerSetMedia') &&
             $this->installTables()
         ;
     }
@@ -105,6 +104,25 @@ class Ps_DemoCQRSHooksUsage extends Module
     public function uninstall()
     {
         return parent::uninstall() && $this->uninstallTables();
+    }
+
+    public function hookActionAdminControllerSetMedia()
+    {
+        if (!$this->isSymfonyContext()) {
+            return;
+        }
+
+        /** @var RequestStack $requestStack */
+        $requestStack = $this->get('request_stack');
+        $currentRequest = $requestStack->getCurrentRequest();
+
+        if (null === $currentRequest || 'admin_customers_index' !== $currentRequest->get('_route')) {
+            return;
+        }
+
+        $this->context->controller->addJS(
+            "{$this->getPathUri()}views/dist/admin_customer.js"
+        );
     }
 
     /**
@@ -140,7 +158,11 @@ class Ps_DemoCQRSHooksUsage extends Module
                     ->setOptions([
                         'id_field' => 'id_customer',
                         'position_field' => 'position',
+                        'update_method' => 'POST',
                         'update_route' => 'ps_democqrshooksusage_update_position',
+                        'record_route_params' => [
+                            'id_customer' => 'customerId',
+                        ],
                     ])
             )
         ;
