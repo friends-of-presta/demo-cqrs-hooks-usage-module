@@ -201,7 +201,7 @@ class Ps_DemoCQRSHooksUsage extends Module
         /**
          * This part demonstrates the usage of CQRS pattern query to perform read operation from Reviewer entity.
          *
-         * @see https://devdocs.prestashop.com/1.7/development/architecture/cqrs/ for more detailed information.
+         * @see https://devdocs.prestashop.com/1.7/development/architecture/domain/cqrs/ for more detailed information.
          *
          * As this is our recommended approach of reading the data but we not force to use this pattern in modules -
          * you can use directly an entity here or wrap it in custom service class.
@@ -257,7 +257,7 @@ class Ps_DemoCQRSHooksUsage extends Module
         try {
             /*
              * This part demonstrates the usage of CQRS pattern command to perform write operation for Reviewer entity.
-             * @see https://devdocs.prestashop.com/1.7/development/architecture/cqrs/ for more detailed information.
+             * @see https://devdocs.prestashop.com/1.7/development/architecture/domain/cqrs/ for more detailed information.
              *
              * As this is our recommended approach of writing the data but we not force to use this pattern in modules -
              * you can use directly an entity here or wrap it in custom service class.
