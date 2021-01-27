@@ -3,6 +3,7 @@
 ### Requirements
 
  1. Composer, see [Composer](https://getcomposer.org/) to learn more
+ 2. Npm, see [Npm](https://nodejs.org/en/) to learn more
  
 ### How to install
 
@@ -11,6 +12,8 @@
  3. `cd` into module's directory and run following commands:
 	 - `composer dumpautoload` to generate autoloader for module
  4. Install module from Back Office
+ 5. Run `npm install`
+ 6. Run `npm run build`
 
 *Because the name of the directory and the name of the main module file must match.
 

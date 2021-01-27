@@ -1,0 +1,28 @@
+{
+  "name": "ps_democqrshooksusage",
+  "version": "1.0.0",
+  "description": "demonstration module of new PrestaShop features usage",
+  "main": "webpack.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack-cli --mode production",
+    "dev": "webpack-cli --mode development --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/friends-of-prestashop/demo-cqrs-hooks-usage-module.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/friends-of-prestashop/demo-cqrs-hooks-usage-module/issues"
+  },
+  "homepage": "https://github.com/friends-of-prestashop/demo-cqrs-hooks-usage-module#readme",
+  "devDependencies": {
+    "babel-loader": "^8.0.5",
+    "@babel/core": "^7.3.4",
+    "@babel/preset-env": "^7.4.1",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3"
+  }
+}

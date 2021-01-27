@@ -17,15 +17,16 @@ use DemoCQRSHooksUsage\Domain\Reviewer\QueryResult\ReviewerSettingsForForm;
 use Doctrine\DBAL\Query\QueryBuilder;
 use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 use PrestaShop\PrestaShop\Core\Domain\Customer\Exception\CustomerException;
+use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\PositionColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ToggleColumn;
 use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
 use PrestaShop\PrestaShop\Core\Grid\Filter\Filter;
+use PrestaShop\PrestaShop\Core\Module\Exception\ModuleErrorException;
 use PrestaShop\PrestaShop\Core\Search\Filters\CustomerFilters;
 use PrestaShopBundle\Form\Admin\Type\SwitchType;
 use PrestaShopBundle\Form\Admin\Type\YesAndNoChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Class Ps_DemoCQRSHooksUsage demonstrates the usage of CQRS pattern and hooks.
@@ -95,7 +96,8 @@ class Ps_DemoCQRSHooksUsage extends Module
             // or it can be modified in form type by overriding "getBlockPrefix" function
             $this->registerHook('actionCustomerFormBuilderModifier') &&
             $this->registerHook('actionAfterCreateCustomerFormHandler') &&
-            $this->registerHook('actionAfterUpdateCustomerFormHandler') &&
+            // Used for adding css or javascript files from the module in admin controllers context
+            $this->registerHook('actionAdminControllerSetMedia') &&
             $this->installTables()
         ;
     }
@@ -103,6 +105,28 @@ class Ps_DemoCQRSHooksUsage extends Module
     public function uninstall()
     {
         return parent::uninstall() && $this->uninstallTables();
+    }
+
+    /**
+     * Used for adding css or javascript files from the module in admin controllers context.
+     */
+    public function hookActionAdminControllerSetMedia()
+    {
+        if (!$this->isSymfonyContext()) {
+            return;
+        }
+
+        /** @var RequestStack $requestStack */
+        $requestStack = $this->get('request_stack');
+        $currentRequest = $requestStack->getCurrentRequest();
+
+        if (null === $currentRequest || 'admin_customers_index' !== $currentRequest->get('_route')) {
+            return;
+        }
+
+        $this->context->controller->addJS(
+            "{$this->getPathUri()}views/dist/admin_customer.js"
+        );
     }
 
     /**
@@ -131,6 +155,20 @@ class Ps_DemoCQRSHooksUsage extends Module
                         'route_param_name' => 'customerId',
                     ])
             )
+            ->addBefore(
+                'optin',
+                (new PositionColumn('position'))
+                    ->setName($translator->trans('Position', [], 'Modules.Democqrshooksusage.Admin'))
+                    ->setOptions([
+                        'id_field' => 'id_customer',
+                        'position_field' => 'position',
+                        'update_method' => 'POST',
+                        'update_route' => 'ps_democqrshooksusage_update_position',
+                        'record_route_params' => [
+                            'id_customer' => 'customerId',
+                        ],
+                    ])
+            )
         ;
 
         $definition->getFilters()->add(
@@ -156,11 +194,22 @@ class Ps_DemoCQRSHooksUsage extends Module
             'IF(dcur.`is_allowed_for_review` IS NULL,0,dcur.`is_allowed_for_review`) AS `is_allowed_for_review`'
         );
 
+        $searchQueryBuilder->addSelect(
+            'IF(dcup.`position` IS NULL, 0, dcup.`position`) AS `position`'
+        );
+
         $searchQueryBuilder->leftJoin(
             'c',
             '`' . pSQL(_DB_PREFIX_) . 'democqrshooksusage_reviewer`',
             'dcur',
             'dcur.`id_customer` = c.`id_customer`'
+        );
+
+        $searchQueryBuilder->leftJoin(
+            'c',
+            '`' . pSQL(_DB_PREFIX_) . 'democqrshooksusage_position`',
+            'dcup',
+            'dcup.`id_customer` = c.`id_customer`'
         );
 
         if ('is_allowed_for_review' === $searchCriteria->getOrderBy()) {
@@ -242,7 +291,7 @@ class Ps_DemoCQRSHooksUsage extends Module
     /**
      * @param array $params
      *
-     * @throws \PrestaShop\PrestaShop\Core\Module\Exception\ModuleErrorException
+     * @throws ModuleErrorException
      */
     private function updateCustomerReviewStatus(array $params)
     {
@@ -287,6 +336,14 @@ class Ps_DemoCQRSHooksUsage extends Module
             ) ENGINE=' . pSQL(_MYSQL_ENGINE_) . ' COLLATE=utf8_unicode_ci;
         ';
 
+        $sql .= '
+            CREATE TABLE IF NOT EXISTS `' . pSQL(_DB_PREFIX_) . 'democqrshooksusage_position` (
+                `id_customer` INT(10) NOT NULL,
+                `position` INT(10) NOT NULL,
+                PRIMARY KEY(`id_customer`)
+            ) ENGINE=' . pSQL(_MYSQL_ENGINE_) . ' COLLATE=utf8_unicode_ci;
+        ';
+
         return Db::getInstance()->execute($sql);
     }
 
@@ -297,7 +354,8 @@ class Ps_DemoCQRSHooksUsage extends Module
      */
     private function uninstallTables()
     {
-        $sql = 'DROP TABLE IF EXISTS `' . pSQL(_DB_PREFIX_) . 'democqrshooksusage_reviewer`';
+        $sql = 'DROP TABLE IF EXISTS `' . pSQL(_DB_PREFIX_) . 'democqrshooksusage_reviewer`;';
+        $sql .= 'DROP TABLE IF EXISTS `' . pSQL(_DB_PREFIX_) . 'democqrshooksusage_position`;';
 
         return Db::getInstance()->execute($sql);
     }
@@ -307,7 +365,7 @@ class Ps_DemoCQRSHooksUsage extends Module
      *
      * @param ReviewerException $exception
      *
-     * @throws \PrestaShop\PrestaShop\Core\Module\Exception\ModuleErrorException
+     * @throws ModuleErrorException
      */
     private function handleException(ReviewerException $exception)
     {
@@ -339,6 +397,6 @@ class Ps_DemoCQRSHooksUsage extends Module
             );
         }
 
-        throw new \PrestaShop\PrestaShop\Core\Module\Exception\ModuleErrorException($message);
+        throw new ModuleErrorException($message);
     }
 }

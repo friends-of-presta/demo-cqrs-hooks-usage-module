@@ -17,6 +17,7 @@ use DemoCQRSHooksUsage\Domain\Reviewer\Exception\ReviewerException;
 use PrestaShop\PrestaShop\Core\Domain\Customer\Exception\CustomerException;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * This controller holds all custom actions which are added by extending "Sell > Customers" page.
@@ -48,6 +49,21 @@ class CustomerReviewController extends FrameworkBundleAdminController
         } catch (ReviewerException $e) {
             $this->addFlash('error', $this->getErrorMessageForException($e, $this->getErrorMessageMapping()));
         }
+
+        return $this->redirectToRoute('admin_customers_index');
+    }
+
+    /**
+     * Used to catch position update action.
+     *
+     * @param int $customerId
+     * @param Request $request
+     *
+     * @return RedirectResponse
+     */
+    public function updatePositionAction($customerId, Request $request)
+    {
+        // update your column positions here.
 
         return $this->redirectToRoute('admin_customers_index');
     }

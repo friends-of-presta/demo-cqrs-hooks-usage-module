@@ -1,3 +1,5 @@
 .idea
 vendor/*
 config.xml
+node_modules
+views/dist
